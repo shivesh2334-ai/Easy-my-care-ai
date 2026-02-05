@@ -1,0 +1,8 @@
+{
+  "name": "Easy My Care AI",
+  "description": "An AI-powered clinical and patient workspace for medical report analysis, practice management, and healthcare service discovery.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

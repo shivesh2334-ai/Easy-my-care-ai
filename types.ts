@@ -58,7 +58,17 @@ export interface Appointment {
   id: string;
   patientName: string;
   time: string;
-  type: 'New' | 'Follow-up' | 'Lab Review';
+  type: 'New' | 'Follow-up' | 'Lab Review' | 'Tele-Consult';
   status: 'Confirmed' | 'Pending' | 'Completed';
   initialSymptoms: string;
+}
+
+export interface Specialist {
+  id: string;
+  name: string;
+  specialty: string;
+  rating: number;
+  fee: number;
+  experience: string;
+  avatar: string;
 }

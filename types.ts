@@ -33,6 +33,14 @@ export interface Invoice {
   status: 'Paid' | 'Unpaid' | 'Pending';
 }
 
+export interface Medication {
+  name: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+  route: string;
+}
+
 export interface PrescriptionData {
   patientName: string;
   age: string;
@@ -50,8 +58,11 @@ export interface PrescriptionData {
   diagnosis: string;
   summary: string;
   treatment: string;
+  medications: Medication[];
   followUpDate: string;
   conversationTranscript?: string;
+  isReferred?: boolean;
+  referredCenter?: string;
 }
 
 export interface Appointment {
@@ -71,4 +82,15 @@ export interface Specialist {
   fee: number;
   experience: string;
   avatar: string;
+}
+
+export interface Alert {
+  id: string;
+  title: string;
+  desc: string;
+  role: UserRole;
+  type: 'TELE' | 'SYSTEM' | 'BILLING';
+  timestamp: Date;
+  isRead: boolean;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH';
 }

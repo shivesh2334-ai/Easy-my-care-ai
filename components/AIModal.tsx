@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { X, ExternalLink, ShieldAlert, Sparkles } from 'lucide-react';
+import { X, ExternalLink, ShieldAlert, Sparkles, Save } from 'lucide-react';
 import { AnalysisResult } from '../types';
 
 interface AIModalProps {
@@ -8,9 +8,10 @@ interface AIModalProps {
   isOpen: boolean;
   onClose: () => void;
   isLoading?: boolean;
+  onSaveToNotes?: (content: string) => void;
 }
 
-const AIModal: React.FC<AIModalProps> = ({ result, isOpen, onClose, isLoading }) => {
+const AIModal: React.FC<AIModalProps> = ({ result, isOpen, onClose, isLoading, onSaveToNotes }) => {
   if (!isOpen) return null;
 
   return (
@@ -74,7 +75,17 @@ const AIModal: React.FC<AIModalProps> = ({ result, isOpen, onClose, isLoading })
           )}
         </div>
 
-        <div className="p-4 border-t border-slate-100 flex justify-end">
+        <div className="p-4 border-t border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <div className="flex gap-2">
+            {!isLoading && result && onSaveToNotes && (
+              <button 
+                onClick={() => onSaveToNotes(result.content)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-xl font-bold text-xs hover:bg-blue-700 transition-colors shadow-md flex items-center gap-2"
+              >
+                <Save size={14} /> Save to Prescription
+              </button>
+            )}
+          </div>
           <button 
             onClick={onClose}
             className="px-6 py-2 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-900 transition-colors shadow-md"

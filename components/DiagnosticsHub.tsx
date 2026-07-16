@@ -2,15 +2,16 @@
 import React from 'react';
 import { 
   ArrowLeft, Eye, UserPlus, HeartPulse, Zap, 
-  FileText, Brain, Upload, Sparkles, ShieldCheck 
+  FileText, Brain, Upload, Sparkles, ShieldCheck, Camera
 } from 'lucide-react';
 
 interface DiagnosticsHubProps {
   onBack: () => void;
   onUpload: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
+  onOpenCamera: (type: string) => void;
 }
 
-const DiagnosticsHub: React.FC<DiagnosticsHubProps> = ({ onBack, onUpload }) => {
+const DiagnosticsHub: React.FC<DiagnosticsHubProps> = ({ onBack, onUpload, onOpenCamera }) => {
   const modules = [
     { label: "Retina AI", desc: "Fundus Report Scan", icon: <Eye />, color: "text-teal-600", bg: "bg-teal-50", type: "RETINA", accept: "image/*" },
     { label: "Dermatology AI", desc: "MedGemma Lesion Scan", icon: <UserPlus />, color: "text-orange-600", bg: "bg-orange-50", type: "DERMA", accept: "image/*" },
@@ -34,33 +35,46 @@ const DiagnosticsHub: React.FC<DiagnosticsHubProps> = ({ onBack, onUpload }) => 
           <div className="relative z-10">
             <h3 className="text-2xl font-black mb-2">Multi-Modal Diagnostics</h3>
             <p className="text-xs text-blue-100 opacity-80 leading-relaxed">
-              Upload clinical imagery or reports for instant AI-driven pathological assessment and differential suggestions.
+              Upload clinical imagery or use your camera for instant AI-driven pathological assessment.
             </p>
           </div>
           <Sparkles className="absolute -bottom-4 -right-4 w-32 h-32 text-white/10 rotate-12" />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {modules.map((mod, i) => (
             <div 
               key={i} 
-              className="bg-white border border-slate-100 rounded-3xl p-5 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-all group relative cursor-pointer active:scale-95"
+              className="bg-white border border-slate-100 rounded-[2rem] p-5 flex items-center gap-5 shadow-sm hover:shadow-md transition-all group"
             >
-              <input 
-                type="file" 
-                accept={mod.accept}
-                onChange={(e) => onUpload(e, mod.type)}
-                className="absolute inset-0 opacity-0 cursor-pointer z-20" 
-              />
-              <div className={`${mod.bg} w-16 h-16 rounded-2xl flex items-center justify-center ${mod.color} mb-4 group-hover:scale-110 transition-transform shadow-sm`}>
-                {/* FIX: Cast icon to React.ReactElement<any> to prevent TS error when cloning and adding 'size' prop */}
-                {React.cloneElement(mod.icon as React.ReactElement<any>, { size: 32 })}
+              <div className={`${mod.bg} w-20 h-20 rounded-[1.5rem] flex items-center justify-center ${mod.color} shrink-0 group-hover:scale-105 transition-transform shadow-sm`}>
+                {React.cloneElement(mod.icon as React.ReactElement<any>, { size: 40 })}
               </div>
-              <h4 className="font-bold text-slate-800 text-sm mb-1">{mod.label}</h4>
-              <p className="text-[10px] text-slate-400 font-medium leading-tight">{mod.desc}</p>
               
-              <div className="mt-4 w-full pt-3 border-t border-slate-50 flex items-center justify-center gap-1 text-[9px] font-bold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Upload size={10} /> TAP TO UPLOAD
+              <div className="flex-1">
+                <h4 className="font-black text-slate-800 text-lg mb-1">{mod.label}</h4>
+                <p className="text-xs text-slate-500 font-medium leading-tight mb-4">{mod.desc}</p>
+                
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <input 
+                      type="file" 
+                      accept={mod.accept}
+                      onChange={(e) => onUpload(e, mod.type)}
+                      className="absolute inset-0 opacity-0 cursor-pointer z-20" 
+                    />
+                    <button className="w-full py-2.5 bg-slate-100 text-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-slate-200 transition-colors">
+                      <Upload size={14} /> Upload
+                    </button>
+                  </div>
+                  
+                  <button 
+                    onClick={() => onOpenCamera(mod.type)}
+                    className="flex-1 py-2.5 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
+                  >
+                    <Camera size={14} /> Camera
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -74,7 +88,7 @@ const DiagnosticsHub: React.FC<DiagnosticsHubProps> = ({ onBack, onUpload }) => 
              <h4 className="font-bold text-slate-800 text-sm">Security & Privacy</h4>
            </div>
            <p className="text-[10px] text-slate-500 leading-relaxed">
-             All uploads are encrypted and processed via HIPPA-compliant AI protocols. Images are not used for public training and are purged after analysis.
+             All uploads are encrypted and processed via HIPAA-compliant AI protocols. Images are not used for training and are purged after analysis.
            </p>
         </div>
       </div>

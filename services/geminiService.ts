@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
-import { AnalysisResult, LineItem } from "../types";
+import { AnalysisResult, LineItem, PrescriptionData } from "../types";
 
 const getAIClient = () => {
   return new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
@@ -21,7 +21,7 @@ export const analyzeMedicalImage = async (
 
   try {
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-3.5-flash',
       contents: {
         parts: [
           { inlineData: { data: base64Data, mimeType: mimeType } },
@@ -68,7 +68,7 @@ export const analyzeDermatologyImage = async (
 
   try {
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-3.1-pro-preview',
       contents: {
         parts: [
           { inlineData: { data: base64Data, mimeType: 'image/jpeg' } },
@@ -111,7 +111,7 @@ export const analyzeRetinaImage = async (
 
   try {
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-3.1-pro-preview',
       contents: {
         parts: [
           { inlineData: { data: base64Data, mimeType: 'image/jpeg' } },
@@ -182,7 +182,7 @@ export const generateGrowthStrategy = async (
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-3.1-pro-preview',
       contents: prompts[category],
     });
 
@@ -204,7 +204,7 @@ export const searchMedicalQueries = async (query: string): Promise<AnalysisResul
   const ai = getAIClient();
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-3.5-flash',
       contents: query,
       config: {
         tools: [{ googleSearch: {} }]
@@ -243,7 +243,7 @@ export const searchDrugInfo = async (drugName: string): Promise<AnalysisResult> 
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-3.5-flash',
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }]
@@ -277,7 +277,7 @@ export const auditMedicalBill = async (base64Data: string): Promise<AnalysisResu
 
   try {
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-3.5-flash',
       contents: {
         parts: [
           { inlineData: { data: base64Data, mimeType: 'image/jpeg' } },
@@ -299,3 +299,242 @@ export const auditMedicalBill = async (base64Data: string): Promise<AnalysisResu
     };
   }
 };
+
+export const analyzePrescriptionImage = async (
+  base64Data: string,
+  mimeType: string = 'image/jpeg'
+): Promise<Partial<PrescriptionData>> => {
+  const ai = getAIClient();
+  const prompt = `You are a medical scribe. Analyze the attached medical document (it could be a hand-written prescription or a lab report). 
+  Extract all relevant information and return it in a structured JSON format.
+  Identify:
+  - Patient Name
+  - Age
+  - Gender
+  - Symptoms/Complaints
+  - Vitals (BP, Heart Rate, Temperature, Weight)
+  - Diagnosis
+  - Treatment/Medications (including dosage and duration)
+  - Investigations/Lab Values
+  - Follow-up Date
+  
+  If a field is not found, leave it empty.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: {
+        parts: [
+          { inlineData: { data: base64Data, mimeType: mimeType } },
+          { text: prompt }
+        ]
+      },
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            patientName: { type: Type.STRING },
+            age: { type: Type.STRING },
+            gender: { type: Type.STRING },
+            symptoms: { type: Type.STRING },
+            vitals: {
+              type: Type.OBJECT,
+              properties: {
+                bp: { type: Type.STRING },
+                hr: { type: Type.STRING },
+                temp: { type: Type.STRING },
+                weight: { type: Type.STRING }
+              }
+            },
+            diagnosis: { type: Type.STRING },
+            treatment: { type: Type.STRING },
+            medications: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  name: { type: Type.STRING },
+                  dosage: { type: Type.STRING },
+                  frequency: { type: Type.STRING },
+                  duration: { type: Type.STRING },
+                  route: { type: Type.STRING }
+                }
+              }
+            },
+            investigations: { type: Type.STRING },
+            labReport: { type: Type.STRING },
+            followUpDate: { type: Type.STRING }
+          }
+        }
+      }
+    });
+
+    if (response.text) {
+      return JSON.parse(response.text);
+    }
+    return {};
+  } catch (error) {
+    console.error("Prescription Analysis Error:", error);
+    throw error;
+  }
+};
+
+export const summarizePrescription = async (data: PrescriptionData): Promise<string> => {
+  const ai = getAIClient();
+  const prompt = `As a medical assistant, provide a concise, professional summary of this prescription for the patient. 
+  Focus on the diagnosis, key medications (from the structured list and general treatment section), and important instructions.
+  
+  Prescription Data:
+  ${JSON.stringify(data, null, 2)}`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: prompt,
+    });
+    return response.text || "Unable to generate summary.";
+  } catch (error) {
+    console.error("Summary Error:", error);
+    return "Error generating summary.";
+  }
+};
+
+export const analyzePrescriptionWithMedGemma = async (data: PrescriptionData): Promise<string> => {
+  const ai = getAIClient();
+  const prompt = `Act as MEDGEMMA, a world-class clinical decision support AI. 
+  Analyze this prescription (including the structured medications list) for clinical accuracy, potential drug-drug interactions, contraindications, and adherence to standard guidelines.
+  
+  Provide:
+  1. Clinical Rationale Review
+  2. Potential Safety Flags (Interactions/Allergies/Contraindications)
+  3. Evidence-Based Suggestions
+  4. Patient Education Points
+  
+  Prescription Data:
+  ${JSON.stringify(data, null, 2)}
+  
+  Disclaimer: For clinical decision support only. Final decision must be by a board-certified physician.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.1-pro-preview',
+      contents: prompt,
+    });
+    return response.text || "Unable to analyze prescription.";
+  } catch (error) {
+    console.error("MedGemma Analysis Error:", error);
+    return "Error during MedGemma analysis.";
+  }
+};
+
+export const suggestTreatment = async (data: Partial<PrescriptionData>): Promise<Partial<PrescriptionData>> => {
+  const ai = getAIClient();
+  const prompt = `Based on the patient's symptoms and diagnosis, suggest a treatment plan including medications (name, dosage, frequency, duration, route) and general instructions.
+  Symptoms: ${data.symptoms}
+  Diagnosis: ${data.diagnosis}
+  Vitals: ${JSON.stringify(data.vitals)}
+  
+  Return the suggestions in a structured JSON format.
+  If you suggest medications, provide them in the 'medications' array.
+  General instructions should be in the 'treatment' field.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            treatment: { type: Type.STRING },
+            medications: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  name: { type: Type.STRING },
+                  dosage: { type: Type.STRING },
+                  frequency: { type: Type.STRING },
+                  duration: { type: Type.STRING },
+                  route: { type: Type.STRING }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (response.text) {
+      return JSON.parse(response.text);
+    }
+    return {};
+  } catch (error) {
+    console.error("Treatment Suggestion Error:", error);
+    throw error;
+  }
+};
+
+export const predictOutbreaks = async (
+  location: string,
+  stats: {
+    covidCases: number[];
+    influenzaCases: number[];
+    diarrhoeaCases: number[];
+    tbCases: number[];
+    typhoidCases: number[];
+    dengueCases: number[];
+    malariaCases: number[];
+    diabetesCases?: number[];
+    hypertensionCases?: number[];
+    copdCases?: number[];
+    cadCases?: number[];
+  },
+  recentDiagnoses: string[],
+  healthAuthorityWarning: string
+): Promise<string> => {
+  const ai = getAIClient();
+  const prompt = `You are a world-class epidemiologist and public health surveillance AI assistant specializing in both infectious diseases (IDSP, NTEP, NVBDCP) and non-communicable diseases (NPCDCS / NP-NCD) under the Government of India's health guidelines.
+  Analyze the following public health and chronic disease surveillance data for the location: "${location}".
+
+  Weekly case numbers for the last 4 weeks:
+  - COVID-19 cases: ${stats.covidCases.join(" -> ")}
+  - Influenza cases: ${stats.influenzaCases.join(" -> ")}
+  - Diarrheal disease cases: ${stats.diarrhoeaCases.join(" -> ")}
+  - Tuberculosis (TB) cases (NTEP surveillance): ${stats.tbCases.join(" -> ")}
+  - Typhoid (Enteric fever) cases: ${stats.typhoidCases.join(" -> ")}
+  - Dengue cases (NVBDCP vector surveillance): ${stats.dengueCases.join(" -> ")}
+  - Malaria cases (NVBDCP vector surveillance): ${stats.malariaCases.join(" -> ")}
+  - Diabetes Mellitus (NCD register): ${(stats.diabetesCases || []).join(" -> ")}
+  - Hypertension / Cardiovascular (NCD register): ${(stats.hypertensionCases || []).join(" -> ")}
+  - COPD / Respiratory NCDs: ${(stats.copdCases || []).join(" -> ")}
+  - Coronary Artery Disease (CAD / Ischemic Heart): ${(stats.cadCases || []).join(" -> ")}
+
+  Clinician's recently logged local patient diagnoses in this clinic:
+  ${recentDiagnoses.length > 0 ? recentDiagnoses.map(d => `- ${d}`).join("\n") : "None logged recently."}
+
+  Current warning from Local Healthcare Authority (MoHFW, WHO, or ICMR):
+  "${healthAuthorityWarning}"
+
+  Please provide a detailed Epidemiological & NCD Burden Report and Outbreak/Complication Prediction for the Indian subcontinent:
+  1. **Regional Assessment**: Assess the current trend of both monitored infectious diseases (Rising, Stable, Falling) and the burden of non-communicable disease (NCD) metrics like diabetes control, cardiovascular strain, and COPD exacerbation risks under Delhi NCR.
+  2. **Risk & Trend Prediction**: Predict the likelihood of outbreaks or NCD complications (e.g., seasonal respiratory crises for COPD, cardiovascular stress during extreme heat/pollution, etc.) over the next 14-30 days with a percentage estimate and clinical rationale.
+  3. **Prescription Feed Correlate**: Correlate the clinician's recent patient diagnoses with the regional trends (are we seeing early sentinel cases of an outbreak, or a rising burden of chronic diabetic/hypertensive patients in this clinic?).
+  4. **Clinical Action Plan**: Actionable recommendations for healthcare providers (preventive immunization, diagnostic testing protocols, DOTS enforcement for TB, lifestyle coaching and routine screening for NCDs, rational prescribing, and proper clinical transfers).
+
+  Keep the response highly professional, clinical, well-structured, and easy to read. Return clean markdown.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: prompt,
+    });
+    return response.text || "Unable to generate outbreak prediction report.";
+  } catch (error) {
+    console.error("Outbreak Prediction Error:", error);
+    return "Error connecting to AI Epidemic Model. Please try again.";
+  }
+};
+

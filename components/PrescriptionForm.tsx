@@ -51,6 +51,110 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({ onBack, onSave, ini
     }
   };
 
+  const applySpecialtyTemplate = (templateType: string) => {
+    if (templateType === 'DENTAL_PULPITIS') {
+      setFormData(prev => ({
+        ...prev,
+        diagnosis: 'Acute Pulpitis with apical involvement',
+        treatment: 'Warm saline gargles 3-4 times a day. Soft, non-spicy diet. Avoid hot and cold beverages. Schedule Root Canal Treatment (RCT) appointment.',
+        dentistFields: {
+          toothNumber: '#36 (Lower Left First Molar)',
+          procedurePlanned: 'Root Canal Treatment (RCT)',
+          dentalInstructions: 'Avoid chewing on the left side. Mild pain is normal for 48 hours.'
+        },
+        medications: [
+          { name: 'Amoxicillin 500mg', dosage: '1 capsule', frequency: 'Three times a day (TDS)', duration: '5 days', route: 'Oral' },
+          { name: 'Ibuprofen 400mg', dosage: '1 tablet', frequency: 'Three times a day (TDS) PRN', duration: '5 days', route: 'Oral' },
+          { name: 'Chlorhexidine 0.2% Mouthwash', dosage: '10 ml', frequency: 'Twice a day (BD) after food', duration: '7 days', route: 'Oral rinse' }
+        ]
+      }));
+    } else if (templateType === 'DENTAL_EXTRACTION') {
+      setFormData(prev => ({
+        ...prev,
+        diagnosis: 'Grossly decayed tooth #18, symptomatic',
+        treatment: 'Keep the cotton gauze pack pressed for 45 mins. Do not spit or rinse today; swallow saliva. Take cold, soft diet (ice cream/curd) after 1 hour. Avoid sucking through straws.',
+        dentistFields: {
+          toothNumber: '#18 (Upper Right Third Molar)',
+          procedurePlanned: 'Tooth Extraction',
+          dentalInstructions: 'No hot fluids for 24 hours. Start warm saline rinses after 24 hours.'
+        },
+        medications: [
+          { name: 'Paracetamol 650mg', dosage: '1 tablet', frequency: 'Four times a day (QDS) PRN', duration: '3 days', route: 'Oral' },
+          { name: 'Ketorolac DT 10mg', dosage: '1 dispersible tablet', frequency: 'Three times a day (TDS)', duration: '3 days', route: 'Oral' }
+        ]
+      }));
+    } else if (templateType === 'PED_AGE') {
+      setFormData(prev => ({
+        ...prev,
+        diagnosis: 'Acute Gastroenteritis with Mild Dehydration',
+        treatment: 'Give Oral Rehydration Salts (ORS) solution continuously. Offer light home-cooked food like rice gruel, banana, curd. Avoid juices, sodas and oily food.',
+        pediatricianFields: {
+          birthWeight: '3.1 kg',
+          developmentalMilestones: 'Normal growth and milestone parameters for current age.',
+          immunizationStatus: 'Complete for Age',
+          parentalGuidance: 'Monitor wet diapers (should be at least 5-6 in 24 hours). Watch for warning signs like sunken eyes, extreme lethargy, or repetitive vomiting.'
+        },
+        medications: [
+          { name: 'Oral Rehydration Salts (ORS)', dosage: '75 ml per loose stool', frequency: 'As needed (PRN)', duration: '3 days', route: 'Oral' },
+          { name: 'Zinc Sulfate Syrup (20mg/5ml)', dosage: '5 ml', frequency: 'Once daily (OD)', duration: '14 days', route: 'Oral' },
+          { name: 'Paracetamol Syrup (120mg/5ml)', dosage: '5 ml', frequency: 'Three times a day (TDS) PRN for Fever > 100°F', duration: '3 days', route: 'Oral' }
+        ]
+      }));
+    } else if (templateType === 'PED_URTI') {
+      setFormData(prev => ({
+        ...prev,
+        diagnosis: 'Acute Nasopharyngitis (Common Cold / URTI)',
+        treatment: 'Keep child hydrated with warm water. Clean nasal passages using saline drops. Elevate head of the bed slightly during sleep.',
+        pediatricianFields: {
+          birthWeight: '3.2 kg',
+          developmentalMilestones: 'Age-appropriate social communication and motor control.',
+          immunizationStatus: 'Complete for Age',
+          parentalGuidance: 'Ensure room is humidified. Seek immediate care if child has rapid breathing, rib retractions, or persistent refusal of feeds.'
+        },
+        medications: [
+          { name: 'Saline Nasal Drops 0.9%', dosage: '2 drops in each nostril', frequency: 'Four times a day (QDS) before feeding and sleep', duration: '5 days', route: 'Nasal' },
+          { name: 'Paracetamol Syrup (120mg/5ml)', dosage: '5 ml', frequency: 'Three times a day (TDS) PRN for pain or discomfort', duration: '3 days', route: 'Oral' }
+        ]
+      }));
+    } else if (templateType === 'OBGYN_ANC') {
+      setFormData(prev => ({
+        ...prev,
+        diagnosis: 'Antenatal Care - Second Trimester (Singleton Gestation)',
+        treatment: 'Walk 30-40 mins daily. Sleep on the left lateral position. High protein, fiber-rich, and iron-dense diet. Regular prenatal visits.',
+        obgynFields: {
+          lmpDate: new Date(new Date().getTime() - 140 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // ~20 weeks ago
+          eddDate: new Date(new Date().getTime() + 140 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          gestationalAge: '20 Weeks, 0 Days',
+          gpalStatus: 'G1 P0 A0 L0',
+          fetalHeartRate: '144 bpm, regular rhythm',
+          pregnancyNotes: 'Monitor fetal kick count daily (expecting minimum 10 movements in 12 hours). Take iron and calcium supplements with a gap of 4 hours.'
+        },
+        medications: [
+          { name: 'Ferrous Ascorbate + Folic Acid tablet', dosage: '1 tablet', frequency: 'Once daily (OD) at bedtime', duration: '90 days', route: 'Oral' },
+          { name: 'Calcium Carbonate + Vitamin D3 tablet', dosage: '1 tablet', frequency: 'Twice daily (BD) with breakfast and lunch', duration: '90 days', route: 'Oral' }
+        ]
+      }));
+    } else if (templateType === 'OBGYN_ANEMIA') {
+      setFormData(prev => ({
+        ...prev,
+        diagnosis: 'Gestational Iron-Deficiency Anemia',
+        treatment: 'Take iron supplement on an empty stomach with Vitamin C (or lemon water) to maximize absorption. Avoid dairy products, antacids, tea, or coffee within 2 hours of iron intake.',
+        obgynFields: {
+          lmpDate: new Date(new Date().getTime() - 182 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // ~26 weeks ago
+          eddDate: new Date(new Date().getTime() + 98 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          gestationalAge: '26 Weeks, 0 Days',
+          gpalStatus: 'G2 P1 A0 L1',
+          fetalHeartRate: '140 bpm, regular',
+          pregnancyNotes: 'Hemoglobin checked: 9.2 g/dL. Instructed on nutritional sources of iron (dates, raisins, green leafy veg, beetroot). Re-check Hb in 4 weeks.'
+        },
+        medications: [
+          { name: 'Carbonyl Iron (equivalent to 100mg elemental Iron)', dosage: '1 capsule', frequency: 'Once daily (OD) on empty stomach', duration: '60 days', route: 'Oral' },
+          { name: 'Vitamin C 500mg', dosage: '1 tablet', frequency: 'Once daily (OD) with iron cap', duration: '60 days', route: 'Oral' }
+        ]
+      }));
+    }
+  };
+
   const handleShare = () => {
     setIsShared(true);
     setTimeout(() => setIsShared(false), 3000);
@@ -327,6 +431,81 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({ onBack, onSave, ini
       </tr>
     `).join('') || '<tr><td colspan="5" style="padding: 8px; text-align: center; color: #999;">No medications listed</td></tr>';
 
+    let specialtyHtml = '';
+    if (formData.specialty === 'DENTIST' && formData.dentistFields) {
+      specialtyHtml = `
+        <div class="section" style="background: #f0fdfa; padding: 15px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #ccfbf1;">
+          <div class="section-title" style="color: #0d9488; border-bottom: 1px solid #99f6e4; font-size: 14px; font-weight: bold; text-transform: uppercase; padding-bottom: 8px; margin-bottom: 15px;">Dental Record & Procedures</div>
+          <table style="width:100%; border:none;">
+            <tr>
+              <td style="width:30%; font-weight:bold; color:#334155; padding: 6px 0;">Tooth Number(s):</td>
+              <td style="color:#0f172a; padding: 6px 0;">${formData.dentistFields.toothNumber || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; color:#334155; padding: 6px 0;">Procedure:</td>
+              <td style="color:#0f172a; padding: 6px 0;">${formData.dentistFields.procedurePlanned || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; color:#334155; padding: 6px 0; vertical-align:top;">Post-Op Instructions:</td>
+              <td style="color:#0f172a; padding: 6px 0; line-height: 1.4;">${formData.dentistFields.dentalInstructions || 'N/A'}</td>
+            </tr>
+          </table>
+        </div>
+      `;
+    } else if (formData.specialty === 'PEDIATRICIAN' && formData.pediatricianFields) {
+      specialtyHtml = `
+        <div class="section" style="background: #f0fdf4; padding: 15px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #dcfce7;">
+          <div class="section-title" style="color: #16a34a; border-bottom: 1px solid #bbf7d0; font-size: 14px; font-weight: bold; text-transform: uppercase; padding-bottom: 8px; margin-bottom: 15px;">Pediatric Development Record</div>
+          <table style="width:100%; border:none;">
+            <tr>
+              <td style="width:30%; font-weight:bold; color:#334155; padding: 6px 0;">Birth Weight:</td>
+              <td style="color:#0f172a; padding: 6px 0;">${formData.pediatricianFields.birthWeight || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; color:#334155; padding: 6px 0;">Immunization Status:</td>
+              <td style="color:#0f172a; padding: 6px 0;">${formData.pediatricianFields.immunizationStatus || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; color:#334155; padding: 6px 0;">Milestones Checklist:</td>
+              <td style="color:#0f172a; padding: 6px 0;">${formData.pediatricianFields.developmentalMilestones || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; color:#334155; padding: 6px 0; vertical-align:top;">Parental Guidance:</td>
+              <td style="color:#0f172a; padding: 6px 0; line-height: 1.4;">${formData.pediatricianFields.parentalGuidance || 'N/A'}</td>
+            </tr>
+          </table>
+        </div>
+      `;
+    } else if (formData.specialty === 'OBGYN' && formData.obgynFields) {
+      specialtyHtml = `
+        <div class="section" style="background: #faf5ff; padding: 15px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #f3e8ff;">
+          <div class="section-title" style="color: #9333ea; border-bottom: 1px solid #e9d5ff; font-size: 14px; font-weight: bold; text-transform: uppercase; padding-bottom: 8px; margin-bottom: 15px;">Obstetric & Maternal Record</div>
+          <table style="width:100%; border:none;">
+            <tr>
+              <td style="width:30%; font-weight:bold; color:#334155; padding: 6px 0;">LMP Date:</td>
+              <td style="color:#0f172a; padding: 6px 0;">${formData.obgynFields.lmpDate || 'N/A'}</td>
+              <td style="width:20%; font-weight:bold; color:#334155; padding: 6px 0;">Est. Delivery (EDD):</td>
+              <td style="color:#0f172a; padding: 6px 0;">${formData.obgynFields.eddDate || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; color:#334155; padding: 6px 0;">Gestational Age:</td>
+              <td style="color:#0f172a; padding: 6px 0;">${formData.obgynFields.gestationalAge || 'N/A'}</td>
+              <td style="font-weight:bold; color:#334155; padding: 6px 0;">GPAL Index:</td>
+              <td style="color:#0f172a; padding: 6px 0;">${formData.obgynFields.gpalStatus || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; color:#334155; padding: 6px 0;">Fetal Heart Rate (FHR):</td>
+              <td style="color:#0f172a; padding: 6px 0;" colspan="3">${formData.obgynFields.fetalHeartRate || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; color:#334155; padding: 6px 0; vertical-align:top;">Maternal Advice:</td>
+              <td style="color:#0f172a; padding: 6px 0; line-height: 1.4;" colspan="3">${formData.obgynFields.pregnancyNotes || 'N/A'}</td>
+            </tr>
+          </table>
+        </div>
+      `;
+    }
+
     const html = `
       <html>
         <head>
@@ -375,6 +554,8 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({ onBack, onSave, ini
             <div class="section-title">Diagnosis</div>
             <p>${formData.diagnosis || 'No diagnosis recorded'}</p>
           </div>
+
+          ${specialtyHtml}
 
           <div class="section">
             <div class="section-title">Medications</div>
@@ -600,6 +781,356 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({ onBack, onSave, ini
             </div>
           </div>
         </section>
+
+        {/* Specialty Selection */}
+        <section className="bg-blue-50/50 p-4 rounded-3xl border border-blue-100 space-y-3">
+          <div className="flex items-center gap-2 text-blue-800">
+            <Stethoscope size={16} className="text-blue-600" />
+            <p className="text-xs font-black uppercase tracking-wider">Clinical Specialty Specifics</p>
+          </div>
+          <div>
+            <label className="text-[10px] font-bold text-slate-500 uppercase ml-1 block">Choose Specialty</label>
+            <select
+              className="w-full p-3 rounded-xl border border-blue-200 focus:ring-2 focus:ring-blue-500 bg-white text-sm font-semibold text-slate-800 outline-none mt-1"
+              value={formData.specialty || 'GENERAL'}
+              onChange={(e) => {
+                const spec = e.target.value as any;
+                handleChange('specialty', spec);
+                // Initialize corresponding fields if not set
+                if (spec === 'DENTIST' && !formData.dentistFields) {
+                  handleChange('dentistFields', { toothNumber: '', procedurePlanned: '', dentalInstructions: '' });
+                } else if (spec === 'PEDIATRICIAN' && !formData.pediatricianFields) {
+                  handleChange('pediatricianFields', { birthWeight: '', developmentalMilestones: '', immunizationStatus: '', parentalGuidance: '' });
+                } else if (spec === 'OBGYN' && !formData.obgynFields) {
+                  handleChange('obgynFields', { lmpDate: '', eddDate: '', gestationalAge: '', gpalStatus: '', fetalHeartRate: '', pregnancyNotes: '' });
+                }
+              }}
+            >
+              <option value="GENERAL">General Practice / Internal Medicine</option>
+              <option value="DENTIST">Dentist</option>
+              <option value="PEDIATRICIAN">Paediatrician</option>
+              <option value="OBGYN">Obstetrician & Gynaecologist</option>
+            </select>
+          </div>
+
+          {formData.specialty && formData.specialty !== 'GENERAL' && (
+            <div className="pt-2 border-t border-blue-100/60 text-left">
+              <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 block mb-2">Load Predefined clinical guidelines & drugs</span>
+              <div className="flex flex-wrap gap-2">
+                {formData.specialty === 'DENTIST' && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => applySpecialtyTemplate('DENTAL_PULPITIS')}
+                      className="text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-xl border border-teal-100/80 transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Sparkles size={11} className="text-teal-600" />
+                      RCT / Toothache Template
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applySpecialtyTemplate('DENTAL_EXTRACTION')}
+                      className="text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-xl border border-teal-100/80 transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Sparkles size={11} className="text-teal-600" />
+                      Tooth Extraction Template
+                    </button>
+                  </>
+                )}
+                {formData.specialty === 'PEDIATRICIAN' && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => applySpecialtyTemplate('PED_AGE')}
+                      className="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-100/80 transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Sparkles size={11} className="text-emerald-600" />
+                      Pediatric Diarrhea (AGE)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applySpecialtyTemplate('PED_URTI')}
+                      className="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-100/80 transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Sparkles size={11} className="text-emerald-600" />
+                      Pediatric Common Cold (URTI)
+                    </button>
+                  </>
+                )}
+                {formData.specialty === 'OBGYN' && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => applySpecialtyTemplate('OBGYN_ANC')}
+                      className="text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 px-3 py-1.5 rounded-xl border border-purple-100/80 transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Sparkles size={11} className="text-purple-600" />
+                      Routine Prenatal Care (ANC)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applySpecialtyTemplate('OBGYN_ANEMIA')}
+                      className="text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 px-3 py-1.5 rounded-xl border border-purple-100/80 transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Sparkles size={11} className="text-purple-600" />
+                      Anemia in Pregnancy
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* Conditional Specialty Specific Form Fields */}
+        {formData.specialty === 'DENTIST' && (
+          <section className="bg-teal-50/40 p-5 rounded-3xl border border-teal-100 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="flex items-center gap-2 text-teal-800">
+              <Stethoscope size={18} className="text-teal-600 font-bold" />
+              <h3 className="text-sm font-black uppercase tracking-wider">Dental Assessment & Procedures</h3>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 text-left">
+              <div className="col-span-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Target Tooth Number(s)</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. #18, #36, Upper Right Molars"
+                  className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none text-sm mt-1 bg-white"
+                  value={formData.dentistFields?.toothNumber || ''}
+                  onChange={(e) => {
+                    const fields = formData.dentistFields || { toothNumber: '', procedurePlanned: '', dentalInstructions: '' };
+                    handleChange('dentistFields', { ...fields, toothNumber: e.target.value });
+                  }}
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Planned / Executed Procedure</label>
+                <select 
+                  className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none text-sm mt-1 bg-white"
+                  value={formData.dentistFields?.procedurePlanned || ''}
+                  onChange={(e) => {
+                    const fields = formData.dentistFields || { toothNumber: '', procedurePlanned: '', dentalInstructions: '' };
+                    handleChange('dentistFields', { ...fields, procedurePlanned: e.target.value });
+                    
+                    // Pre-fill diagnosis or treatment if they are empty
+                    if (e.target.value && !formData.diagnosis) {
+                      handleChange('diagnosis', `Required dental intervention: ${e.target.value}`);
+                    }
+                  }}
+                >
+                  <option value="">-- Select Procedure --</option>
+                  <option value="Root Canal Treatment (RCT)">Root Canal Treatment (RCT)</option>
+                  <option value="Tooth Extraction">Tooth Extraction</option>
+                  <option value="Dental Filling / Composite Restoration">Dental Filling / Composite Restoration</option>
+                  <option value="Scaling & Polishing">Scaling & Polishing</option>
+                  <option value="Dental Crown / Bridge Placement">Dental Crown / Bridge Placement</option>
+                  <option value="Implant Consultation">Implant Consultation</option>
+                  <option value="Fluoride Treatment / Sealant">Fluoride Treatment / Sealant</option>
+                </select>
+              </div>
+
+              <div className="col-span-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Post-Procedure Dental Instructions</label>
+                <textarea 
+                  rows={2}
+                  placeholder="e.g. Avoid hot/spicy foods for 24h, rinse with warm salt water after 24h, do not spit aggressively..."
+                  className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none text-sm mt-1 bg-white"
+                  value={formData.dentistFields?.dentalInstructions || ''}
+                  onChange={(e) => {
+                    const fields = formData.dentistFields || { toothNumber: '', procedurePlanned: '', dentalInstructions: '' };
+                    handleChange('dentistFields', { ...fields, dentalInstructions: e.target.value });
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+        )}
+
+        {formData.specialty === 'PEDIATRICIAN' && (
+          <section className="bg-emerald-50/40 p-5 rounded-3xl border border-emerald-100 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="flex items-center gap-2 text-emerald-800">
+              <Stethoscope size={18} className="text-emerald-600 font-bold" />
+              <h3 className="text-sm font-black uppercase tracking-wider">Pediatric Development & Care</h3>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 text-left">
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Birth Weight (kg)</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. 3.1 kg"
+                  className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm mt-1 bg-white"
+                  value={formData.pediatricianFields?.birthWeight || ''}
+                  onChange={(e) => {
+                    const fields = formData.pediatricianFields || { birthWeight: '', developmentalMilestones: '', immunizationStatus: '', parentalGuidance: '' };
+                    handleChange('pediatricianFields', { ...fields, birthWeight: e.target.value });
+                  }}
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Immunization Status</label>
+                <select 
+                  className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm mt-1 bg-white"
+                  value={formData.pediatricianFields?.immunizationStatus || ''}
+                  onChange={(e) => {
+                    const fields = formData.pediatricianFields || { birthWeight: '', developmentalMilestones: '', immunizationStatus: '', parentalGuidance: '' };
+                    handleChange('pediatricianFields', { ...fields, immunizationStatus: e.target.value });
+                  }}
+                >
+                  <option value="">-- Select Status --</option>
+                  <option value="Complete for Age">Complete for Age</option>
+                  <option value="Pending BCG / HepB">Pending BCG / HepB</option>
+                  <option value="Pending OPV / DPT Booster">Pending OPV / DPT Booster</option>
+                  <option value="Pending MMR Vaccine">Pending MMR Vaccine</option>
+                  <option value="Partially Vaccinated">Partially Vaccinated</option>
+                  <option value="Vaccination Overdue">Vaccination Overdue</option>
+                </select>
+              </div>
+
+              <div className="col-span-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Developmental Milestones</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. Appropriate social smile, holding head steady, tracking objects"
+                  className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm mt-1 bg-white"
+                  value={formData.pediatricianFields?.developmentalMilestones || ''}
+                  onChange={(e) => {
+                    const fields = formData.pediatricianFields || { birthWeight: '', developmentalMilestones: '', immunizationStatus: '', parentalGuidance: '' };
+                    handleChange('pediatricianFields', { ...fields, developmentalMilestones: e.target.value });
+                  }}
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Parental Guidance & Nutritional Advice</label>
+                <textarea 
+                  rows={2}
+                  placeholder="e.g. Continue exclusive breastfeeding for 6 months, introduce complementary feeding, supplement Vitamin D..."
+                  className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm mt-1 bg-white"
+                  value={formData.pediatricianFields?.parentalGuidance || ''}
+                  onChange={(e) => {
+                    const fields = formData.pediatricianFields || { birthWeight: '', developmentalMilestones: '', immunizationStatus: '', parentalGuidance: '' };
+                    handleChange('pediatricianFields', { ...fields, parentalGuidance: e.target.value });
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+        )}
+
+        {formData.specialty === 'OBGYN' && (
+          <section className="bg-purple-50/40 p-5 rounded-3xl border border-purple-100 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="flex items-center gap-2 text-purple-800">
+              <Stethoscope size={18} className="text-purple-600 font-bold" />
+              <h3 className="text-sm font-black uppercase tracking-wider">Obstetric & Gynaecologic Record</h3>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 text-left">
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">LMP Date</label>
+                <input 
+                  type="date" 
+                  className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 outline-none text-sm mt-1 bg-white"
+                  value={formData.obgynFields?.lmpDate || ''}
+                  onChange={(e) => {
+                    const lmp = e.target.value;
+                    let edd = '';
+                    let ga = '';
+                    
+                    if (lmp) {
+                      // Calculate EDD: LMP + 280 days
+                      const lmpDateObj = new Date(lmp);
+                      const eddDateObj = new Date(lmpDateObj.getTime() + 280 * 24 * 60 * 60 * 1000);
+                      edd = eddDateObj.toISOString().split('T')[0];
+                      
+                      // Calculate Gestational Age
+                      const diffTime = Math.abs(new Date().getTime() - lmpDateObj.getTime());
+                      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                      const weeks = Math.floor(diffDays / 7);
+                      const days = diffDays % 7;
+                      ga = `${weeks} Weeks, ${days} Days`;
+                    }
+                    
+                    const fields = formData.obgynFields || { lmpDate: '', eddDate: '', gestationalAge: '', gpalStatus: '', fetalHeartRate: '', pregnancyNotes: '' };
+                    handleChange('obgynFields', { 
+                      ...fields, 
+                      lmpDate: lmp,
+                      eddDate: edd,
+                      gestationalAge: ga
+                    });
+                  }}
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Calculated EDD</label>
+                <input 
+                  type="date" 
+                  disabled
+                  title="Automatically calculated from LMP"
+                  className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm mt-1 text-slate-500 outline-none"
+                  value={formData.obgynFields?.eddDate || ''}
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Gestational Age</label>
+                <input 
+                  type="text" 
+                  disabled
+                  placeholder="Auto-calculated"
+                  className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm mt-1 text-slate-500 outline-none"
+                  value={formData.obgynFields?.gestationalAge || ''}
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">GPAL Status</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. G2 P1 A0 L1"
+                  className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 outline-none text-sm mt-1 bg-white"
+                  value={formData.obgynFields?.gpalStatus || ''}
+                  onChange={(e) => {
+                    const fields = formData.obgynFields || { lmpDate: '', eddDate: '', gestationalAge: '', gpalStatus: '', fetalHeartRate: '', pregnancyNotes: '' };
+                    handleChange('obgynFields', { ...fields, gpalStatus: e.target.value });
+                  }}
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Fetal Heart Rate (FHR)</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. 142 bpm / Regular"
+                  className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 outline-none text-sm mt-1 bg-white"
+                  value={formData.obgynFields?.fetalHeartRate || ''}
+                  onChange={(e) => {
+                    const fields = formData.obgynFields || { lmpDate: '', eddDate: '', gestationalAge: '', gpalStatus: '', fetalHeartRate: '', pregnancyNotes: '' };
+                    handleChange('obgynFields', { ...fields, fetalHeartRate: e.target.value });
+                  }}
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Antepartum / Gynecological Advice</label>
+                <textarea 
+                  rows={2}
+                  placeholder="e.g. Regular iron and calcium supplements, monitor for headache or visual blur, report any fluid leaking immediately..."
+                  className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 outline-none text-sm mt-1 bg-white"
+                  value={formData.obgynFields?.pregnancyNotes || ''}
+                  onChange={(e) => {
+                    const fields = formData.obgynFields || { lmpDate: '', eddDate: '', gestationalAge: '', gpalStatus: '', fetalHeartRate: '', pregnancyNotes: '' };
+                    handleChange('obgynFields', { ...fields, pregnancyNotes: e.target.value });
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Vitals */}
         <section className="space-y-4">

@@ -538,3 +538,75 @@ export const predictOutbreaks = async (
   }
 };
 
+export const analyzePatientHealth = async (data: {
+  symptoms: string;
+  medications: string;
+  labs: string;
+  radiology: string;
+  wearables: string;
+  visitNotes: string;
+  customDetails?: string;
+  hasUploadedRecords?: boolean;
+}): Promise<string> => {
+  const ai = getAIClient();
+  const prompt = `You are MECHANA, a compassionate, brilliant, world-class personal AI health optimizer and clinical guide. 
+  Your task is to analyze the patient's comprehensive health data alongside the world's medical knowledge to help them understand what is happening in their body.
+  
+  PATIENT DATA PROVIDED:
+  - **Symptom Profile & Duration**: ${data.symptoms || "None reported."}
+  - **Medications & Supplements**: ${data.medications || "None listed."}
+  - **Lab Results (Blood, Urine, etc.)**: ${data.labs || "None uploaded / entered."}
+  - **Radiology Findings (X-Rays, MRIs, Ultrasounds, etc.)**: ${data.radiology || "None uploaded / entered."}
+  - **Wearable & Device Metrics (Heart rate, sleep logs, blood pressure, steps, etc.)**: ${data.wearables || "None linked."}
+  - **Recent Visit Notes & Clinician Summaries**: ${data.visitNotes || "None documented."}
+  - **Additional Patient Context**: ${data.customDetails || "None provided."}
+
+  Please generate a highly polished, detailed, and compassionate "MEGANA HEALTH ANALYSIS & OPTIMIZATION REPORT".
+  Ensure your tone is professional, empathetic, clear, and reassuring, avoiding alarmism while maintaining strict medical accuracy. 
+
+  Structure the analysis exactly under these Markdown headings:
+  
+  ### 🌟 1. Compassionate Clinical Summary
+  (Provide a high-level overview explaining what might be happening, drawing from world-class medical knowledge, in language a patient can easily grasp.)
+  
+  ### 📜 2. Symptom Timeline & Sequence of Events
+  (Break the patient's active health complaints down chronologically. Create a sequential timeline/flow of events that explains how symptom A relates to symptom B, showing cause-and-effect paths.)
+  
+  ### 🧪 3. Lab Report Analysis
+  (Review and explain any uploaded/entered lab metrics. Decrypt what normal/abnormal ranges signify, how they correlate with symptoms, and what physiological processes are involved.)
+  
+  ### 📷 4. Radiology Decryption
+  (Translate any imaging or scan findings into highly visual, simple terms. Explain precisely what the radiologist's notes mean for the patient's structural or functional health.)
+  
+  ### 💊 5. Current Treatment & Medication Review
+  (Analyze their list of current medications and treatment protocols. Discuss what each medication is targeting, how they interact, and general compliance best practices.)
+  
+  ### 📈 6. Continuous Optimization Plan (Between Visits)
+  (Provide concrete, actionable, day-to-day strategies for nutrition, hydration, physical activity, sleep hygiene, and symptom tracking to help the patient optimize their health continually prior to their next clinician consult.)
+  
+  ### ⚠️ Important Patient Safety Notice
+  (A clear reminder that this is educational support, and they must always confirm health updates or changes with their professional clinician.)`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.1-pro-preview', // Pro preview has excellent medical reasoning
+      contents: prompt,
+    });
+    return response.text || "Megana is currently digesting your logs, please retry in a moment.";
+  } catch (error) {
+    console.error("Megana Health Analysis Error:", error);
+    try {
+      // Fallback to flash if pro has issues or transient errors
+      const responseFallback = await ai.models.generateContent({
+        model: 'gemini-3.5-flash',
+        contents: prompt,
+      });
+      return responseFallback.text || "Failed to finalize analysis.";
+    } catch (fallbackError) {
+      console.error("Megana Fallback Error:", fallbackError);
+      return "Megana AI is temporarily offline, please check your network connection and try again.";
+    }
+  }
+};
+
+

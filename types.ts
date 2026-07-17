@@ -41,6 +41,28 @@ export interface Medication {
   route: string;
 }
 
+export interface DentistFields {
+  toothNumber: string;
+  procedurePlanned: string;
+  dentalInstructions: string;
+}
+
+export interface PediatricianFields {
+  birthWeight: string;
+  developmentalMilestones: string;
+  immunizationStatus: string;
+  parentalGuidance: string;
+}
+
+export interface ObGynFields {
+  lmpDate: string;
+  eddDate: string;
+  gestationalAge: string;
+  gpalStatus: string;
+  fetalHeartRate: string;
+  pregnancyNotes: string;
+}
+
 export interface PrescriptionData {
   patientName: string;
   age: string;
@@ -63,6 +85,10 @@ export interface PrescriptionData {
   conversationTranscript?: string;
   isReferred?: boolean;
   referredCenter?: string;
+  specialty?: 'GENERAL' | 'DENTIST' | 'PEDIATRICIAN' | 'OBGYN';
+  dentistFields?: DentistFields;
+  pediatricianFields?: PediatricianFields;
+  obgynFields?: ObGynFields;
 }
 
 export interface Appointment {

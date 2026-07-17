@@ -23,10 +23,11 @@ import CameraCapture from './components/CameraCapture';
 import PublicSurveillance from './components/PublicSurveillance';
 import PracticeAnalytics from './components/PracticeAnalytics';
 import ExternalIntegration from './components/ExternalIntegration';
+import { PatientHealthOptimizer } from './components/PatientHealthOptimizer';
 
 const App: React.FC = () => {
   const [role, setRole] = useState<UserRole>(UserRole.DOCTOR);
-  const [currentView, setCurrentView] = useState<'HOME' | 'PRESCRIPTION' | 'SCHEDULE' | 'DRUG_INFO' | 'GROWTH' | 'BILLING' | 'DIAGNOSTICS' | 'TELE_CONSULT' | 'CLINIC_TELE' | 'SURVEILLANCE' | 'ANALYTICS' | 'INTEGRATION'>('HOME');
+  const [currentView, setCurrentView] = useState<'HOME' | 'PRESCRIPTION' | 'SCHEDULE' | 'DRUG_INFO' | 'GROWTH' | 'BILLING' | 'DIAGNOSTICS' | 'TELE_CONSULT' | 'CLINIC_TELE' | 'SURVEILLANCE' | 'ANALYTICS' | 'INTEGRATION' | 'PATIENT_OPTIMIZER'>('HOME');
   const [searchQuery, setSearchQuery] = useState('');
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [aiResult, setAiResult] = useState<AnalysisResult | null>(null);
@@ -504,6 +505,7 @@ const App: React.FC = () => {
 
   if (role === UserRole.PATIENT) {
     if (currentView === 'TELE_CONSULT') return <div className="min-h-screen bg-slate-100 flex justify-center items-start md:pt-4 md:pb-20 font-sans"><div className="w-full max-w-md bg-white shadow-2xl md:rounded-[2.5rem] overflow-hidden border border-gray-200 min-h-screen md:min-h-[850px] flex flex-col relative"><TeleConsultation onBack={() => setCurrentView('HOME')} onBook={handleTeleBooking} /></div></div>;
+    if (currentView === 'PATIENT_OPTIMIZER') return <div className="min-h-screen bg-slate-100 flex justify-center items-start md:pt-4 md:pb-20 font-sans"><div className="w-full max-w-md bg-white shadow-2xl md:rounded-[2.5rem] overflow-hidden border border-gray-200 min-h-screen md:min-h-[850px] flex flex-col relative"><PatientHealthOptimizer onBack={() => setCurrentView('HOME')} /></div></div>;
   }
 
   const roleAlerts = alerts.filter(a => a.role === role);
@@ -624,6 +626,34 @@ const App: React.FC = () => {
                     <button type="submit" className="absolute right-3 top-2.5 p-1.5 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors"><Sparkles size={18} /></button>
                   </form>
                   
+                  {/* Megana AI Health Optimizer Banner */}
+                  <div 
+                    onClick={() => setCurrentView('PATIENT_OPTIMIZER')}
+                    className="mb-6 p-5 rounded-[2.5rem] bg-gradient-to-r from-blue-950 to-indigo-900 text-white shadow-xl shadow-blue-100 relative overflow-hidden group cursor-pointer hover:shadow-2xl hover:scale-[1.01] active:scale-98 transition-all border border-indigo-800/35"
+                  >
+                    <div className="absolute right-0 bottom-0 opacity-15 translate-x-3 translate-y-3 group-hover:scale-110 transition-transform duration-300">
+                      <Brain size={110} />
+                    </div>
+                    <div className="relative z-10 flex flex-col justify-between h-full space-y-3.5">
+                      <div className="flex justify-between items-center">
+                        <div className="bg-indigo-500/30 text-indigo-200 border border-indigo-400/20 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider">
+                          Inter-Visit Health Optimizer
+                        </div>
+                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white">
+                          <Sparkles size={14} className="animate-pulse" />
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-sm leading-tight text-white flex items-center gap-1.5">
+                          Megana AI Health Optimizer
+                        </h3>
+                        <p className="text-[10px] text-slate-300 leading-relaxed font-medium mt-1">
+                          Consolidate active symptoms, upload lab or radiology reports, log smartwatch metrics, and build a persistent daily optimization checklist.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4 mb-8">
                     <button onClick={() => setCurrentView('TELE_CONSULT')} className="bg-blue-600 p-6 rounded-[2.5rem] text-white shadow-xl shadow-blue-100 text-left relative overflow-hidden group">
                       <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:scale-110 transition-transform">
